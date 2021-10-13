@@ -78,13 +78,13 @@ def product_collection():
     if inputs.method == 'GET':
         template = inputs.args
         res = ProductResource.get_by_template(template)
-        if res is not None:
+        if res:
             rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
         else:
             rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     elif inputs.method == 'POST':
-        res = ProductResource.create(inputs.data)
-        rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
+        ProductResource.create(inputs.data)
+        rsp = Response("OK", status=200, content_type="application/json")
     return rsp
 
 @app.route('/products/<product_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -92,19 +92,19 @@ def get_product_by_id(product_id):
     inputs = rest_utils.RESTContext(request)
     if inputs.method == 'GET':
         res = ProductResource.get_by_template({"id": product_id})
-        if res is not None:
+        if res:
             rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
         else:
             rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     elif inputs.method == 'PUT':
         res = ProductResource.update({"id": product_id}, inputs.data)
-        if res is not None:
+        if res:
             rsp = Response("OK", status=200, content_type="text/plain")
         else:
             rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     elif inputs.method == 'DELETE':
         res = ProductResource.delete({"id": product_id})
-        if res is not None:
+        if res:
             rsp = Response("OK", status=200, content_type="text/plain")
         else:
             rsp = Response("NOT FOUND", status=404, content_type="text/plain")
