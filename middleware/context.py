@@ -11,7 +11,6 @@ def get_db_info():
     :return: A dictionary with connect info for MySQL
     """
 
-    """
     db_host = os.environ.get("DBHOST", None)
     db_user = os.environ.get("DBUSER", None)
     db_password = os.environ.get("DBPASSWORD", None)
@@ -29,11 +28,11 @@ def get_db_info():
             "password": "Himalayas2021",
             "cursorclass": pymysql.cursors.DictCursor
         }
-    """
-    db_info = {
-        "host": "catalogdb.clboe01dd0s5.us-east-2.rds.amazonaws.com",
-        "user": "admin",
-        "password": "Himalayas2021",
-        "cursorclass": pymysql.cursors.DictCursor
-    }
+
+    # db_info = {
+    #     "host": "catalogdb.clboe01dd0s5.us-east-2.rds.amazonaws.com",
+    #     "user": "admin",
+    #     "password": "Himalayas2021",
+    #     "cursorclass": pymysql.cursors.DictCursor
+    # }
     return db_info

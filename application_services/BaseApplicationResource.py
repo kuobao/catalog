@@ -42,6 +42,24 @@ class BaseRDBApplicationResource(BaseApplicationResource):
         return res
 
     @classmethod
+    def create(cls, data):
+        db_name, table_name = cls.get_data_resource_info()
+        res = RDBService.create(db_name, table_name, data)
+        return res
+
+    @classmethod
+    def update(cls, template, row):
+        db_name, table_name = cls.get_data_resource_info()
+        res = RDBService.update(db_name, table_name, template, row)
+        return res
+
+    @classmethod
+    def delete(cls, template):
+        db_name, table_name = cls.get_data_resource_info()
+        res = RDBService.delete(db_name, table_name, template)
+        return res
+
+    @classmethod
     @abstractmethod
     def get_links(self, resource_data):
         pass

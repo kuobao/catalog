@@ -6,10 +6,7 @@ from datetime import datetime
 
 import utils.rest_utils as rest_utils
 
-
 from application_services.ProductResource.product_resource import ProductResource
-from application_services.UsersResource.user_service import UserResource
-from database_services.RDBService import RDBService as RDBService
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -17,6 +14,7 @@ logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 CORS(app)
+
 
 ##################################################################################################################
 
@@ -62,53 +60,49 @@ def demo(parameter1=None):
     return rsp
 
 
-
 @app.route('/')
 def hello_world():
     return '<u>Hello World!</u>'
 
-@app.route('/products', methods=['GET', 'POST'])
+
+@app.route('/products', methods=['GET'])
 def product_collection():
-    """
-    1. HTTP GET return all users.
-    2. HTTP POST with body --> create a user, i.e --> database.
-    :return:
-    """
     inputs = rest_utils.RESTContext(request)
-    if inputs.method == 'GET':
-        template = inputs.args
-        res = ProductResource.get_by_template(template)
-        if res:
-            rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
-        else:
-            rsp = Response("NOT FOUND", status=404, content_type="text/plain")
-    elif inputs.method == 'POST':
-        ProductResource.create(inputs.data)
-        rsp = Response("OK", status=200, content_type="application/json")
+    template = inputs.args
+    res = ProductResource.get_by_template(template)
+    rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
     return rsp
 
-@app.route('/products/<product_id>', methods=['GET', 'PUT', 'DELETE'])
-def get_product_by_id(product_id):
-    inputs = rest_utils.RESTContext(request)
-    if inputs.method == 'GET':
-        res = ProductResource.get_by_template({"id": product_id})
-        if res:
-            rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
-        else:
-            rsp = Response("NOT FOUND", status=404, content_type="text/plain")
-    elif inputs.method == 'PUT':
-        res = ProductResource.update({"id": product_id}, inputs.data)
-        if res:
-            rsp = Response("OK", status=200, content_type="text/plain")
-        else:
-            rsp = Response("NOT FOUND", status=404, content_type="text/plain")
-    elif inputs.method == 'DELETE':
-        res = ProductResource.delete({"id": product_id})
-        if res:
-            rsp = Response("OK", status=200, content_type="text/plain")
-        else:
-            rsp = Response("NOT FOUND", status=404, content_type="text/plain")
+
+@app.route('/products', methods=['POST'])
+def create_product():
+    data = request.get_json()
+    res = ProductResource.create(data)
+    rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
     return rsp
+
+
+@app.route('/products/<product_id>', methods=['GET'])
+def get_product_by_id(product_id):
+    res = ProductResource.get_product(product_id)
+    rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
+    return rsp
+
+
+@app.route('/products/<product_id>', methods=["PUT"])
+def update_product_by_id(product_id):
+    data = request.get_json()
+    res = ProductResource.update({"id": product_id}, data)
+    rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
+    return rsp
+
+
+@app.route('/products/<product_id>', methods=["DELETE"])
+def delete_product_by_id(product_id):
+    res = ProductResource.delete({"id": product_id})
+    rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
+    return rsp
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
